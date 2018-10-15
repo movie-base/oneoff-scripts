@@ -54,7 +54,7 @@ def formatGenres(genres):
 # checking to see if there is a rotten tomatoe rating and setting Attribute
 # if there is rotten tomatoe rating then just set it to N/A
 def creatingRottenTomatoes(newJson, data):
-    newJson['rottenTomatoesRating'] = "N/A"
+    newJson['rottenTomatoesRating'] = None
     for x in range(len(data['Ratings'])):
         if(data['Ratings'][x]['Source'] == "Rotten Tomatoes"):
             rtRating = re.sub(r'\%$', '', data['Ratings'][x]['Value'])
@@ -66,7 +66,7 @@ def getYearTitle():
     allTitleYear = list ()
     # open json
     df = pd.read_csv(open("MovieGenre.csv",encoding="utf8",errors='replace'), delimiter=",")
-    df = df.head(100)
+    df = df.head(2)
     # iterate over df
     for i, row in df.iterrows():
         # make an array of size 2 and store title in index 0 and year in index 1
@@ -98,27 +98,95 @@ def createJsonList(allTitleYear):
             continue
         # add relevant data to json and append to list of json objects
         newJson['title'] = data['Title']
-        newJson['year'] = data['Year']
-        newJson['released'] = data['Released']
-        newJson['runtime'] = data['Runtime']
-        newJson['genres'] = formatGenres(data['Genre'].split(','))
-        newJson['directors'] = data['Director'].split(',')
-        newJson['writers'] = formatWriters(data['Writer'].split(','))
-        newJson['actors'] = formatActors(data['Actors'].split(','))
-        newJson['plot'] = data['Plot']
-        newJson['langauge'] = formatLanguage(data['Language'].split(','))
-        newJson['country'] = data['Country']
-        newJson['poster'] = data['Poster']
-        newJson = creatingRottenTomatoes(newJson, data)
-        newJson['metascore'] = None if data['Metascore'] == 'N/A' else float(data['Metascore'])
-        newJson['imdbRating'] = None if data['imdbRating'] == 'N/A' else float(data['imdbRating'])
-        newJson['imdbVotes'] = int(re.sub(r',*', '', data['imdbVotes']))
-        newJson['imdbId'] = data['imdbID']
-        boxOffice = re.sub(r'[\$,]', '', data['BoxOffice'])
-        newJson['boxOffice'] = None if boxOffice == 'N/A' else float(boxOffice)
-        # print(str(count) + ". " + newJson['title'] + " and the rating = " + str(newJson['rottenTomatoesRating']) + " has been added to the list!")
-        createMovie(newJson, count)
 
+        if('Year' in data.keys()):
+            newJson['year'] = None if data['Year'] == 'N/A' else data['Year']
+        else:
+            newJson['year'] = None
+
+        if('Released' in data.keys()):
+            newJson['released'] = None if data['Released'] == 'N/A' else data['Released']
+        else:
+            newJson['released'] = None
+
+        if('Runtime' in data.keys()):
+            newJson['runtime'] = None if data['Runtime'] == 'N/A' else data['Runtime']
+        else:
+            newJson['runtime'] = None
+
+        if('Genre' in data.keys()):
+            newJson['genres'] = None if data['Genre'] == 'N/A' else formatGenres(data['Genre'].split(','))
+        else:
+            newJson['genres'] = None
+
+        if('Director' in data.keys()):
+            newJson['directors'] = None if data['Director'] == 'N/A' else data['Director'].split(',')
+        else:
+            newJson['directors'] = None
+
+        if('Writer' in data.keys()):
+            newJson['writers'] = None if data['Writer'] == 'N/A' else formatWriters(data['Writer'].split(','))
+        else:
+            newJson['writers'] = None
+
+        if('Actors' in data.keys()):
+            newJson['actors'] = None if data['Actors'] == 'N/A' else formatActors(data['Actors'].split(','))
+        else:
+            newJson['actors'] = None
+
+        if('Plot' in data.keys()):
+            newJson['plot'] = None if data['Plot'] == 'N/A' else data['Plot']
+        else:
+            newJson['plot'] = None
+
+        if('Language' in data.keys()):
+            newJson['langauge'] = None if data['Language'] == 'N/A' else formatLanguage(data['Language'].split(','))
+        else:
+            newJson['language'] = None
+
+        if('Country' in data.keys()):
+            newJson['country'] = None if data['Country'] == 'N/A' else data['Country']
+        else:
+            newJson['country'] = None
+
+        if('Poster' in data.keys()):
+            newJson['poster'] = None if data['Poster'] == 'N/A' else data['Poster']
+        else:
+            newJson['poster'] = None
+
+        if('Ratings' in data.keys()):
+            newJson = creatingRottenTomatoes(newJson, data)
+        else:
+            newJson['rottenTomatoesRating'] = None
+
+        if('Metascore' in data.keys()):
+            newJson['metascore'] = None if data['Metascore'] == 'N/A' else float(data['Metascore'])
+        else:
+            newJson['metascore'] = None
+
+        if('imdbRating' in data.keys()):
+            newJson['imdbRating'] = None if data['imdbRating'] == 'N/A' else float(data['imdbRating'])
+        else:
+            newJson['imdbRating'] = None
+
+        if('imdbVotes' in data.keys()):
+            newJson['imdbVotes'] = None if data['imdbVotes'] == 'N/A' else int(re.sub(r',*', '', data['imdbVotes']))
+        else:
+            newJson['imdbVotes'] = None
+
+        newJson['imdbId'] = data['imdbID']
+
+        if('BoxOffice' in data.keys()):
+            boxOffice = re.sub(r'[\$,]', '', data['BoxOffice'])
+            newJson['boxOffice'] = None if boxOffice == 'N/A' else float(boxOffice)
+        else:
+            newJson['boxOffice'] = None
+
+        # print(str(count) + ". " + newJson['title'] + " has been added to the list!")
+        createMovie(newJson, count)
+        # print("____START____")
+        # print(newJson)
+        # print("____END____")
         count = count + 1
     return
 
