@@ -9,7 +9,7 @@ def createMovie(movie, count):
     endpoint = "http://45.63.27.74:8080/movies"
     headers = {"Authorization":"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjViYzEzOGE5MTdjOTViMDhiZjAyOWY3YSIsImlhdCI6MTUzOTU3OTc3MX0.GHtp4JdrVUDjOXh66cw7TUE6UCk3s6q9XXu4EfNJjZU"}
     try:
-        requests.post(endpoint, data=json.dumps(movie), headers=headers)
+        requests.post(endpoint, data=movie, headers=headers)
         print(f' {count}. Added {movie["title"]}')
     except:
         print(f'### Failed to add {movie["title"]}')
@@ -66,6 +66,7 @@ def getYearTitle():
     allTitleYear = list ()
     # open json
     df = pd.read_csv(open("MovieGenre.csv",encoding="utf8",errors='replace'), delimiter=",")
+    df = df.head(10)
     # iterate over df
     for i, row in df.iterrows():
         # make an array of size 2 and store title in index 0 and year in index 1
@@ -88,12 +89,13 @@ def createJsonList(allTitleYear):
         newJson = {}
         # construct url and send request for json using the title and year from the kaggle dataset
         if(curr[1] != None):
-            url = "https://www.omdbapi.com/?i=tt3896198&apikey=1e6a24c2&t=\"" + curr[0] + "\"" + "&y=\"" + curr[1] + "\""
+            url = "https://www.omdbapi.com/?i=tt3896198&apikey=e7cda7bd&t=\"" + curr[0] + "\"" + "&y=\"" + curr[1] + "\""
         else:
-            url = "https://www.omdbapi.com/?i=tt3896198&apikey=1e6a24c2&t=\"" + curr[0]
+            url = "https://www.omdbapi.com/?i=tt3896198&apikey=e7cda7bd&t=\"" + curr[0]
         data = requests.get(url).json()
         # checks if data returned is valid
         if("Response" in data.keys() and data["Response"] == "False"):
+            print(f' {count}. Removed {data["Title"]}')
             continue
         # add relevant data to json and append to list of json objects
         if('imdbID' not in data.keys()):
@@ -142,9 +144,9 @@ def createJsonList(allTitleYear):
             newJson['plot'] = None
 
         if('Language' in data.keys()):
-            newJson['langauge'] = None if data['Language'] == 'N/A' else formatLanguage(data['Language'].split(','))
+            newJson['languages'] = None if data['Language'] == 'N/A' else formatLanguage(data['Language'].split(','))
         else:
-            newJson['language'] = None
+            newJson['languages'] = None
 
         if('Country' in data.keys()):
             newJson['country'] = None if data['Country'] == 'N/A' else data['Country']
@@ -176,15 +178,17 @@ def createJsonList(allTitleYear):
         else:
             newJson['imdbVotes'] = None
         if('BoxOffice' in data.keys()):
-            boxOffice = re.sub(r'[\$,]', '', data['BoxOffice'])
-            newJson['boxOffice'] = None if boxOffice == 'N/A' else float(boxOffice)
+            boxOffice = re.sub(r'\D', '', data['BoxOffice'])
+            newJson['boxOffice'] = None if boxOffice == '' else float(boxOffice)
         else:
             newJson['boxOffice'] = None
 
         newJson['imdbId'] = data['imdbID']
-        createMovie(newJson, count)
+        # createMovie(newJson, count)
 
-        # print(str(count) + ". " + newJson['title'] + " has been added to the list!")
+        print(str(count) + ". " + newJson['title'] + " has been added to the list!")
+        print(newJson)
+        print()
         count = count + 1
     return
 
