@@ -121,22 +121,22 @@ def createJsonList(allTitleYear):
         if('Genre' in data.keys()):
             newJson['genres'] = None if data['Genre'] == 'N/A' else formatGenres(data['Genre'].split(','))
         else:
-            newJson['genres'] = None
+            newJson['genres'] = []
 
         if('Director' in data.keys()):
             newJson['directors'] = None if data['Director'] == 'N/A' else data['Director'].split(',')
         else:
-            newJson['directors'] = None
+            newJson['directors'] = []
 
         if('Writer' in data.keys()):
             newJson['writers'] = None if data['Writer'] == 'N/A' else formatWriters(data['Writer'].split(','))
         else:
-            newJson['writers'] = None
+            newJson['writers'] = []
 
         if('Actors' in data.keys()):
             newJson['actors'] = None if data['Actors'] == 'N/A' else formatActors(data['Actors'].split(','))
         else:
-            newJson['actors'] = None
+            newJson['actors'] = []
 
         if('Plot' in data.keys()):
             newJson['plot'] = None if data['Plot'] == 'N/A' else data['Plot']
@@ -146,7 +146,7 @@ def createJsonList(allTitleYear):
         if('Language' in data.keys()):
             newJson['languages'] = None if data['Language'] == 'N/A' else formatLanguage(data['Language'].split(','))
         else:
-            newJson['languages'] = None
+            newJson['languages'] = []
 
         if('Country' in data.keys()):
             newJson['country'] = None if data['Country'] == 'N/A' else data['Country']
