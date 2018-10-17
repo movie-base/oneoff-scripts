@@ -75,8 +75,47 @@ def generateMoviesCsvWithProbabilities(oldCsvFilename, newCsvFilename):
 	f.close()
 	g.close()
 
+"""
+	Given a csv file of movies and their probabilities of being watched, 
+	find the min probability out of all the movies.
+"""
+def findMinProbability(csvFilename):
+	f = open(csvFilename, "r")
+	f.readline()	# Skip header
+
+	minProbability = 1
+	for movieDetails in f:
+		id, genre, imdbRating, weighting, probability = movieDetails.strip().split(",")
+		probability = float(probability)
+		if probability < minProbability:
+			minProbability = probability
+
+	f.close()
+	return minProbability
+
+
+
+"""
+	Given a csv file of movies and their probabilities of being watched, 
+	find the max probability out of all the movies.
+"""
+def findMaxProbability(csvFilename):
+	f = open(csvFilename, "r")
+	f.readline()	# Skip header
+
+	maxProbability = 0
+	for movieDetails in f:
+		id, genre, imdbRating, weighting, probability = movieDetails.strip().split(",")
+		probability = float(probability)
+		if probability > maxProbability:
+			maxProbability = probability
+
+	f.close()
+	return maxProbability
 
 # oldCsvFilename = XXXXX
 # newCsvFilename = XXXXX
 # generateMoviesCsvWithWeightings(oldCsvFilename, newCsvFilename)
-generateMoviesCsvWithProbabilities(oldCsvFilename, newCsvFilename)
+# generateMoviesCsvWithProbabilities(oldCsvFilename, newCsvFilename)
+# print findMinProbability("weighted-movies-2.csv")
+# print findMaxProbability("weighted-movies-2.csv")
