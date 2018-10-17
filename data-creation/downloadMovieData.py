@@ -13,6 +13,7 @@ def downloadMovieData(connectionUrl, csvFilename):
 	)
 
 	f = open(csvFilename, "w")
+	f.write("id, genres, imdbRating\n")
 	for record in records:
 		id = str(record["_id"])
 		genres = "-".join(record["genres"]) if record["genres"] else "None"
