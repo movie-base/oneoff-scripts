@@ -9,7 +9,7 @@ def createMovie(movie, count):
     endpoint = "http://45.63.27.74:8080/movies"
     headers = {"Authorization":"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjViYzEzOGE5MTdjOTViMDhiZjAyOWY3YSIsImlhdCI6MTUzOTU3OTc3MX0.GHtp4JdrVUDjOXh66cw7TUE6UCk3s6q9XXu4EfNJjZU"}
     try:
-        requests.post(endpoint, data=movie, headers=headers)
+        requests.post(endpoint, json=movie, headers=headers)
         print(f' {count}. Added {movie["title"]}')
     except:
         print(f'### Failed to add {movie["title"]}')
@@ -62,11 +62,11 @@ def creatingRottenTomatoes(newJson, data):
     return newJson
 
 def getYearTitle():
+    # print()
     # list used to store the title and year from the kaggle dataset
     allTitleYear = list ()
     # open json
-    df = pd.read_csv(open("MovieGenre.csv",encoding="utf8",errors='replace'), delimiter=",")
-    df = df.head(10)
+    df = pd.read_csv(open("csvfiles/output5.csv",encoding="utf8",errors='replace'), delimiter=",")
     # iterate over df
     for i, row in df.iterrows():
         # make an array of size 2 and store title in index 0 and year in index 1
@@ -85,6 +85,7 @@ def createJsonList(allTitleYear):
     jsonObjects = list ()
     count = 1
     for curr in allTitleYear:
+        # print("title: " + curr[0] + " year: " + curr[1])
         # make new json object
         newJson = {}
         # construct url and send request for json using the title and year from the kaggle dataset
@@ -92,10 +93,14 @@ def createJsonList(allTitleYear):
             url = "https://www.omdbapi.com/?i=tt3896198&apikey=e7cda7bd&t=\"" + curr[0] + "\"" + "&y=\"" + curr[1] + "\""
         else:
             url = "https://www.omdbapi.com/?i=tt3896198&apikey=e7cda7bd&t=\"" + curr[0]
-        data = requests.get(url).json()
+        try:
+            data = requests.get(url).json()
+        except Exception:
+            continue
+        # print(data)
         # checks if data returned is valid
         if("Response" in data.keys() and data["Response"] == "False"):
-            print(f' {count}. Removed {data["Title"]}')
+            count = count + 1
             continue
         # add relevant data to json and append to list of json objects
         if('imdbID' not in data.keys()):
@@ -184,11 +189,11 @@ def createJsonList(allTitleYear):
             newJson['boxOffice'] = None
 
         newJson['imdbId'] = data['imdbID']
-        # createMovie(newJson, count)
+        createMovie(newJson, count)
 
-        print(str(count) + ". " + newJson['title'] + " has been added to the list!")
-        print(newJson)
-        print()
+        # print(str(count) + ". " + newJson['title'] + " has been added to the list!")
+        # print(newJson)
+        # print()
         count = count + 1
     return
 
