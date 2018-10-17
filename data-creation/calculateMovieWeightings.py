@@ -11,7 +11,7 @@ genreWeighting = {
 }
 
 """
-	generateMoviesCsvWithWeightings reads an movies csv which contains id, genre, imdbRating
+	generateMoviesCsvWithWeightings reads a movies csv which contains id, genre, imdbRating
 	and creates a new movies csv which contains the columns of the old movies csv but also
 	a movie weighting. This weighting will be used to calculate the probability of a movie
 	being watched.
@@ -39,7 +39,44 @@ def generateMoviesCsvWithWeightings(oldCsvFilename, newCsvFilename):
 	f.close()
 	g.close()
 
+"""
+	generateMoviesCsvWithProbabilities reads a movies csv which contains id, genre, imdbRating, weighting
+	and creates a new movies csv which contains the columns of the old movies csv but also the probability,
+	representing the likelihood of the movie being watched. To retrieve the probability, we must find the
+	denominator by adding all the weightings together. The probability will be then calculated using the
+	following formula:
+		probability = weighting/denominator
+"""
+def generateMoviesCsvWithProbabilities(oldCsvFilename, newCsvFilename):
+	f = open(oldCsvFilename, "r")
+	g = open(newCsvFilename, "w")
+
+	f.readline()	# Skip header
+
+	# Calculate denominator by summing up the weightings
+	weightingTotal = 0;
+	for movieDetails in f:
+		id, genre, imdbRating, weighting = movieDetails.strip().split(",")
+		weightingTotal += float(weighting)
+
+
+	# Write rows with probabilities to new file		
+	f.seek(0)	# Restart file pointer
+
+	header = f.readline().strip()
+	g.write(header + ",probability\n")
+
+	for movieDetails in f:
+		movieDetails = movieDetails.strip()
+		id, genre, imdbRating, weighting = movieDetails.split(",")
+		probability = float(weighting) / weightingTotal
+		g.write(movieDetails + "," + str(probability) + "\n")
+
+	f.close()
+	g.close()
+
 
 # oldCsvFilename = XXXXX
 # newCsvFilename = XXXXX
-generateMoviesCsvWithWeightings(oldCsvFilename, newCsvFilename)
+# generateMoviesCsvWithWeightings(oldCsvFilename, newCsvFilename)
+generateMoviesCsvWithProbabilities(oldCsvFilename, newCsvFilename)
