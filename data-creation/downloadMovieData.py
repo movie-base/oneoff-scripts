@@ -13,10 +13,10 @@ def downloadMovieData(connectionUrl, csvFilename):
 	)
 
 	f = open(csvFilename, "w")
-	f.write("id, genres, imdbRating\n")
+	f.write("id,genres,imdbRating\n")
 	for record in records:
 		id = str(record["_id"])
-		genres = "-".join(record["genres"]) if record["genres"] else "None"
+		genres = "*".join(record["genres"]) if record["genres"] else "None"
 		imdbRating = str(record["imdbRating"])
 		recordInfoString = ",".join([id, genres, imdbRating])
 
@@ -27,3 +27,4 @@ def downloadMovieData(connectionUrl, csvFilename):
 # connectionUrl = XXXXX
 # csvFilename = XXXXX
 downloadMovieData(connectionUrl, csvFilename)
+
